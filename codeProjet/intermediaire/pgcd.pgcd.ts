@@ -1,0 +1,12 @@
+x
+y
+resultat
+pgdc
+pG
+fonction
+x
+y
+resultat
+pgdc
+pG
+fonction

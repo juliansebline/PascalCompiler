@@ -1,0 +1,5 @@
+compilation et execution des tests:
+  make clean && make && cat pascal/hello.pas | bin/ppc
+  make clean && make && cat pascal/helloworld.pas | bin/ppc 
+  make clean && make && cat pascal/pgcd.pas | bin/ppc
+  make clean && make && cat pascal/trimin.pas | bin/ppc

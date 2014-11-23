@@ -1,0 +1,3895 @@
+Terminaux inutilisés dans la grammaire
+
+   OP_PTR
+
+
+Grammaire
+
+    0 $accept: Program $end
+
+    1 Program: ProgramHeader SEP_SCOL Block SEP_DOT
+
+    2 ProgramHeader: KW_PROGRAM TOK_IDENT
+
+    3 Block: BlockDeclConst BlockDeclType BlockDeclVar BlockDeclFunc BlockCode
+
+    4 BlockSimple: BlockDeclConst BlockDeclType BlockDeclVar BlockCode
+
+    5 BlockDeclConst: KW_CONST ListDeclConst
+    6               | /* vide */
+
+    7 ListDeclConst: ListDeclConst DeclConst
+    8              | DeclConst
+
+    9 DeclConst: TOK_IDENT OP_EQ Expression SEP_SCOL
+   10          | TOK_IDENT SEP_DOTS BaseType OP_EQ Expression SEP_SCOL
+
+   11 BlockDeclType: KW_TYPE ListDeclType
+   12              | /* vide */
+
+   13 ListDeclType: ListDeclType DeclType
+   14             | DeclType
+
+   15 DeclType: TOK_IDENT OP_EQ Type SEP_SCOL
+
+   16 Type: UserType
+   17     | SimpleType
+
+   18 UserType: EnumType
+   19         | InterType
+   20         | ArrayType
+   21         | RecordType
+
+   22 SimpleType: BaseType
+   23           | TOK_IDENT
+
+   24 BaseType: KW_INTEGER
+   25         | KW_REAL
+   26         | KW_BOOLEAN
+   27         | KW_CHAR
+   28         | KW_STRING
+
+   29 EnumType: SEP_PO ListEnumValue SEP_PF
+
+   30 ListEnumValue: ListEnumValue SEP_COMMA TOK_IDENT
+   31              | TOK_IDENT
+
+   32 InterType: InterBase SEP_DOTDOT InterBase
+
+   33 InterBase: TOK_IDENT
+   34          | TOK_INTEGER
+   35          | TOK_CHAR
+
+   36 ArrayType: KW_ARRAY SEP_CO ArrayIndex SEP_CF KW_OF SimpleType
+
+   37 ArrayIndex: TOK_IDENT
+   38           | InterType
+
+   39 RecordType: KW_RECORD RecordFields KW_END
+
+   40 RecordFields: RecordFields SEP_SCOL RecordField
+   41             | RecordField
+
+   42 RecordField: ListIdent SEP_DOTS SimpleType
+
+   43 BlockDeclVar: KW_VAR ListDeclVar
+   44             | /* vide */
+
+   45 ListDeclVar: ListDeclVar DeclVar
+   46            | DeclVar
+
+   47 DeclVar: ListIdent SEP_DOTS SimpleType SEP_SCOL
+
+   48 ListIdent: ListIdent SEP_COMMA TOK_IDENT
+   49          | TOK_IDENT
+
+   50 BlockDeclFunc: ListDeclFunc SEP_SCOL
+   51              | /* vide */
+
+   52 ListDeclFunc: ListDeclFunc SEP_SCOL DeclFunc
+   53             | DeclFunc
+
+   54 DeclFunc: ProcDecl
+   55         | FuncDecl
+
+   56 ProcDecl: ProcHeader SEP_SCOL BlockSimple
+
+   57 ProcHeader: ProcIdent
+   58           | ProcIdent FormalArgs
+
+   59 ProcIdent: KW_PROC TOK_IDENT
+
+   60 FormalArgs: SEP_PO ListFormalArgs SEP_PF
+
+   61 ListFormalArgs: ListFormalArgs SEP_SCOL FormalArg
+   62               | FormalArg
+
+   63 FormalArg: ValFormalArg
+   64          | VarFormalArg
+
+   65 ValFormalArg: ListIdent SEP_DOTS SimpleType
+
+   66 VarFormalArg: KW_VAR ListIdent SEP_DOTS SimpleType
+
+   67 FuncDecl: FuncHeader SEP_SCOL BlockSimple
+
+   68 FuncHeader: FuncIdent FuncResult
+   69           | FuncIdent FormalArgs FuncResult
+
+   70 FuncIdent: KW_FUNC TOK_IDENT
+
+   71 FuncResult: SEP_DOTS SimpleType
+
+   72 BlockCode: KW_BEGIN ListInstr KW_END
+   73          | KW_BEGIN ListInstr SEP_SCOL KW_END
+   74          | KW_BEGIN KW_END
+
+   75 ListInstr: ListInstr SEP_SCOL Instr
+   76          | Instr
+
+   77 Instr: KW_WHILE Expression KW_DO Instr
+   78      | KW_REPEAT ListInstr KW_UNTIL Expression
+   79      | KW_FOR TOK_IDENT OP_AFFECT Expression ForDirection Expression KW_DO Instr
+   80      | KW_IF Expression KW_THEN Instr
+   81      | KW_IF Expression KW_THEN Instr KW_ELSE Instr
+   82      | VarExpr OP_AFFECT Expression
+   83      | TOK_IDENT SEP_PO ListeExpr SEP_PF
+   84      | TOK_IDENT
+   85      | KW_WRITE SEP_PO ListeExpr SEP_PF
+   86      | KW_WRITELN SEP_PO ListeExpr SEP_PF
+   87      | KW_READ SEP_PO VarExpr SEP_PF
+   88      | KW_WRITELN
+   89      | BlockCode
+
+   90 ForDirection: KW_TO
+   91             | KW_DOWNTO
+
+   92 Expression: MathExpr
+   93           | CompExpr
+   94           | BoolExpr
+   95           | AtomExpr
+   96           | VarExpr
+   97           | TOK_IDENT SEP_PO ListeExpr SEP_PF
+
+   98 MathExpr: Expression OP_ADD Expression
+   99         | Expression OP_SUB Expression
+  100         | Expression OP_MUL Expression
+  101         | Expression OP_SLASH Expression
+  102         | Expression KW_DIV Expression
+  103         | Expression KW_MOD Expression
+  104         | Expression OP_EXP Expression
+  105         | OP_SUB Expression
+  106         | OP_ADD Expression
+
+  107 CompExpr: Expression OP_EQ Expression
+  108         | Expression OP_NEQ Expression
+  109         | Expression OP_LT Expression
+  110         | Expression OP_LTE Expression
+  111         | Expression OP_GT Expression
+  112         | Expression OP_GTE Expression
+
+  113 BoolExpr: Expression KW_AND Expression
+  114         | Expression KW_OR Expression
+  115         | Expression KW_XOR Expression
+  116         | KW_NOT Expression
+
+  117 AtomExpr: SEP_PO Expression SEP_PF
+  118         | TOK_INTEGER
+  119         | TOK_REAL
+  120         | TOK_BOOLEAN
+  121         | TOK_CHAR
+  122         | TOK_STRING
+
+  123 VarExpr: TOK_IDENT
+  124        | VarExpr SEP_CO Expression SEP_CF
+  125        | VarExpr SEP_DOT TOK_IDENT
+
+  126 ListeExpr: ListeExpr SEP_COMMA Expression
+  127          | Expression
+
+
+Terminaux, suivis des règles où ils apparaissent
+
+$end (0) 0
+error (256)
+KW_PROGRAM (258) 2
+KW_CONST (259) 5
+KW_TYPE (260) 11
+KW_VAR (261) 43 66
+KW_ARRAY (262) 36
+KW_OF (263) 36
+KW_RECORD (264) 39
+KW_BEGIN (265) 72 73 74
+KW_END (266) 39 72 73 74
+KW_DIV (267) 102
+KW_MOD (268) 103
+KW_AND (269) 113
+KW_OR (270) 114
+KW_XOR (271) 115
+KW_NOT (272) 116
+KW_IF (273) 80 81
+KW_THEN (274) 80 81
+KW_ELSE (275) 81
+KW_WHILE (276) 77
+KW_DO (277) 77 79
+KW_REPEAT (278) 78
+KW_UNTIL (279) 78
+KW_FOR (280) 79
+KW_TO (281) 90
+KW_DOWNTO (282) 91
+KW_PROC (283) 59
+KW_FUNC (284) 70
+KW_INTEGER (285) 24
+KW_REAL (286) 25
+KW_BOOLEAN (287) 26
+KW_CHAR (288) 27
+KW_STRING (289) 28
+KW_WRITE (290) 85
+KW_WRITELN (291) 86 88
+KW_READ (292) 87
+SEP_SCOL (293) 1 9 10 15 40 47 50 52 56 61 67 73 75
+SEP_DOT (294) 1 125
+SEP_DOTS (295) 10 42 47 65 66 71
+SEP_DOTDOT (296) 32
+SEP_COMMA (297) 30 48 126
+SEP_CO (298) 36 124
+SEP_CF (299) 36 124
+SEP_PO (300) 29 60 83 85 86 87 97 117
+SEP_PF (301) 29 60 83 85 86 87 97 117
+OP_EQ (302) 9 10 15 107
+OP_NEQ (303) 108
+OP_LT (304) 109
+OP_LTE (305) 110
+OP_GT (306) 111
+OP_GTE (307) 112
+OP_ADD (308) 98 106
+OP_SUB (309) 99 105
+OP_MUL (310) 100
+OP_SLASH (311) 101
+OP_EXP (312) 104
+OP_AFFECT (313) 79 82
+TOK_IDENT (314) 2 9 10 15 23 30 31 33 37 48 49 59 70 79 83 84 97 123
+    125
+TOK_INTEGER (315) 34 118
+TOK_REAL (316) 119
+TOK_BOOLEAN (317) 120
+TOK_CHAR (318) 35 121
+TOK_STRING (319) 122
+OP_POS (320)
+OP_NEG (321)
+OP_PTR (322)
+OP_DOT (323)
+KW_IFX (324)
+
+
+Non-terminaux, suivis des règles où ils apparaissent
+
+$accept (70)
+    à gauche: 0
+Program (71)
+    à gauche: 1, à droite: 0
+ProgramHeader (72)
+    à gauche: 2, à droite: 1
+Block (73)
+    à gauche: 3, à droite: 1
+BlockSimple (74)
+    à gauche: 4, à droite: 56 67
+BlockDeclConst (75)
+    à gauche: 5 6, à droite: 3 4
+ListDeclConst (76)
+    à gauche: 7 8, à droite: 5 7
+DeclConst (77)
+    à gauche: 9 10, à droite: 7 8
+BlockDeclType (78)
+    à gauche: 11 12, à droite: 3 4
+ListDeclType (79)
+    à gauche: 13 14, à droite: 11 13
+DeclType (80)
+    à gauche: 15, à droite: 13 14
+Type (81)
+    à gauche: 16 17, à droite: 15
+UserType (82)
+    à gauche: 18 19 20 21, à droite: 16
+SimpleType (83)
+    à gauche: 22 23, à droite: 17 36 42 47 65 66 71
+BaseType (84)
+    à gauche: 24 25 26 27 28, à droite: 10 22
+EnumType (85)
+    à gauche: 29, à droite: 18
+ListEnumValue (86)
+    à gauche: 30 31, à droite: 29 30
+InterType (87)
+    à gauche: 32, à droite: 19 38
+InterBase (88)
+    à gauche: 33 34 35, à droite: 32
+ArrayType (89)
+    à gauche: 36, à droite: 20
+ArrayIndex (90)
+    à gauche: 37 38, à droite: 36
+RecordType (91)
+    à gauche: 39, à droite: 21
+RecordFields (92)
+    à gauche: 40 41, à droite: 39 40
+RecordField (93)
+    à gauche: 42, à droite: 40 41
+BlockDeclVar (94)
+    à gauche: 43 44, à droite: 3 4
+ListDeclVar (95)
+    à gauche: 45 46, à droite: 43 45
+DeclVar (96)
+    à gauche: 47, à droite: 45 46
+ListIdent (97)
+    à gauche: 48 49, à droite: 42 47 48 65 66
+BlockDeclFunc (98)
+    à gauche: 50 51, à droite: 3
+ListDeclFunc (99)
+    à gauche: 52 53, à droite: 50 52
+DeclFunc (100)
+    à gauche: 54 55, à droite: 52 53
+ProcDecl (101)
+    à gauche: 56, à droite: 54
+ProcHeader (102)
+    à gauche: 57 58, à droite: 56
+ProcIdent (103)
+    à gauche: 59, à droite: 57 58
+FormalArgs (104)
+    à gauche: 60, à droite: 58 69
+ListFormalArgs (105)
+    à gauche: 61 62, à droite: 60 61
+FormalArg (106)
+    à gauche: 63 64, à droite: 61 62
+ValFormalArg (107)
+    à gauche: 65, à droite: 63
+VarFormalArg (108)
+    à gauche: 66, à droite: 64
+FuncDecl (109)
+    à gauche: 67, à droite: 55
+FuncHeader (110)
+    à gauche: 68 69, à droite: 67
+FuncIdent (111)
+    à gauche: 70, à droite: 68 69
+FuncResult (112)
+    à gauche: 71, à droite: 68 69
+BlockCode (113)
+    à gauche: 72 73 74, à droite: 3 4 89
+ListInstr (114)
+    à gauche: 75 76, à droite: 72 73 75 78
+Instr (115)
+    à gauche: 77 78 79 80 81 82 83 84 85 86 87 88 89, à droite: 75
+    76 77 79 80 81
+ForDirection (116)
+    à gauche: 90 91, à droite: 79
+Expression (117)
+    à gauche: 92 93 94 95 96 97, à droite: 9 10 77 78 79 80 81 82
+    98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114
+    115 116 117 124 126 127
+MathExpr (118)
+    à gauche: 98 99 100 101 102 103 104 105 106, à droite: 92
+CompExpr (119)
+    à gauche: 107 108 109 110 111 112, à droite: 93
+BoolExpr (120)
+    à gauche: 113 114 115 116, à droite: 94
+AtomExpr (121)
+    à gauche: 117 118 119 120 121 122, à droite: 95
+VarExpr (122)
+    à gauche: 123 124 125, à droite: 82 87 96 124 125
+ListeExpr (123)
+    à gauche: 126 127, à droite: 83 85 86 97 126
+
+
+État 0
+
+    0 $accept: . Program $end
+
+    KW_PROGRAM  décalage et aller à l'état 1
+
+    Program        aller à l'état 2
+    ProgramHeader  aller à l'état 3
+
+
+État 1
+
+    2 ProgramHeader: KW_PROGRAM . TOK_IDENT
+
+    TOK_IDENT  décalage et aller à l'état 4
+
+
+État 2
+
+    0 $accept: Program . $end
+
+    $end  décalage et aller à l'état 5
+
+
+État 3
+
+    1 Program: ProgramHeader . SEP_SCOL Block SEP_DOT
+
+    SEP_SCOL  décalage et aller à l'état 6
+
+
+État 4
+
+    2 ProgramHeader: KW_PROGRAM TOK_IDENT .
+
+    $défaut  réduction par utilisation de la règle 2 (ProgramHeader)
+
+
+État 5
+
+    0 $accept: Program $end .
+
+    $défaut  accepter
+
+
+État 6
+
+    1 Program: ProgramHeader SEP_SCOL . Block SEP_DOT
+
+    KW_CONST  décalage et aller à l'état 7
+
+    $défaut  réduction par utilisation de la règle 6 (BlockDeclConst)
+
+    Block           aller à l'état 8
+    BlockDeclConst  aller à l'état 9
+
+
+État 7
+
+    5 BlockDeclConst: KW_CONST . ListDeclConst
+
+    TOK_IDENT  décalage et aller à l'état 10
+
+    ListDeclConst  aller à l'état 11
+    DeclConst      aller à l'état 12
+
+
+État 8
+
+    1 Program: ProgramHeader SEP_SCOL Block . SEP_DOT
+
+    SEP_DOT  décalage et aller à l'état 13
+
+
+État 9
+
+    3 Block: BlockDeclConst . BlockDeclType BlockDeclVar BlockDeclFunc BlockCode
+
+    KW_TYPE  décalage et aller à l'état 14
+
+    $défaut  réduction par utilisation de la règle 12 (BlockDeclType)
+
+    BlockDeclType  aller à l'état 15
+
+
+État 10
+
+    9 DeclConst: TOK_IDENT . OP_EQ Expression SEP_SCOL
+   10          | TOK_IDENT . SEP_DOTS BaseType OP_EQ Expression SEP_SCOL
+
+    SEP_DOTS  décalage et aller à l'état 16
+    OP_EQ     décalage et aller à l'état 17
+
+
+État 11
+
+    5 BlockDeclConst: KW_CONST ListDeclConst .
+    7 ListDeclConst: ListDeclConst . DeclConst
+
+    TOK_IDENT  décalage et aller à l'état 10
+
+    $défaut  réduction par utilisation de la règle 5 (BlockDeclConst)
+
+    DeclConst  aller à l'état 18
+
+
+État 12
+
+    8 ListDeclConst: DeclConst .
+
+    $défaut  réduction par utilisation de la règle 8 (ListDeclConst)
+
+
+État 13
+
+    1 Program: ProgramHeader SEP_SCOL Block SEP_DOT .
+
+    $défaut  réduction par utilisation de la règle 1 (Program)
+
+
+État 14
+
+   11 BlockDeclType: KW_TYPE . ListDeclType
+
+    TOK_IDENT  décalage et aller à l'état 19
+
+    ListDeclType  aller à l'état 20
+    DeclType      aller à l'état 21
+
+
+État 15
+
+    3 Block: BlockDeclConst BlockDeclType . BlockDeclVar BlockDeclFunc BlockCode
+
+    KW_VAR  décalage et aller à l'état 22
+
+    $défaut  réduction par utilisation de la règle 44 (BlockDeclVar)
+
+    BlockDeclVar  aller à l'état 23
+
+
+État 16
+
+   10 DeclConst: TOK_IDENT SEP_DOTS . BaseType OP_EQ Expression SEP_SCOL
+
+    KW_INTEGER  décalage et aller à l'état 24
+    KW_REAL     décalage et aller à l'état 25
+    KW_BOOLEAN  décalage et aller à l'état 26
+    KW_CHAR     décalage et aller à l'état 27
+    KW_STRING   décalage et aller à l'état 28
+
+    BaseType  aller à l'état 29
+
+
+État 17
+
+    9 DeclConst: TOK_IDENT OP_EQ . Expression SEP_SCOL
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 40
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 18
+
+    7 ListDeclConst: ListDeclConst DeclConst .
+
+    $défaut  réduction par utilisation de la règle 7 (ListDeclConst)
+
+
+État 19
+
+   15 DeclType: TOK_IDENT . OP_EQ Type SEP_SCOL
+
+    OP_EQ  décalage et aller à l'état 46
+
+
+État 20
+
+   11 BlockDeclType: KW_TYPE ListDeclType .
+   13 ListDeclType: ListDeclType . DeclType
+
+    TOK_IDENT  décalage et aller à l'état 19
+
+    $défaut  réduction par utilisation de la règle 11 (BlockDeclType)
+
+    DeclType  aller à l'état 47
+
+
+État 21
+
+   14 ListDeclType: DeclType .
+
+    $défaut  réduction par utilisation de la règle 14 (ListDeclType)
+
+
+État 22
+
+   43 BlockDeclVar: KW_VAR . ListDeclVar
+
+    TOK_IDENT  décalage et aller à l'état 48
+
+    ListDeclVar  aller à l'état 49
+    DeclVar      aller à l'état 50
+    ListIdent    aller à l'état 51
+
+
+État 23
+
+    3 Block: BlockDeclConst BlockDeclType BlockDeclVar . BlockDeclFunc BlockCode
+
+    KW_PROC  décalage et aller à l'état 52
+    KW_FUNC  décalage et aller à l'état 53
+
+    $défaut  réduction par utilisation de la règle 51 (BlockDeclFunc)
+
+    BlockDeclFunc  aller à l'état 54
+    ListDeclFunc   aller à l'état 55
+    DeclFunc       aller à l'état 56
+    ProcDecl       aller à l'état 57
+    ProcHeader     aller à l'état 58
+    ProcIdent      aller à l'état 59
+    FuncDecl       aller à l'état 60
+    FuncHeader     aller à l'état 61
+    FuncIdent      aller à l'état 62
+
+
+État 24
+
+   24 BaseType: KW_INTEGER .
+
+    $défaut  réduction par utilisation de la règle 24 (BaseType)
+
+
+État 25
+
+   25 BaseType: KW_REAL .
+
+    $défaut  réduction par utilisation de la règle 25 (BaseType)
+
+
+État 26
+
+   26 BaseType: KW_BOOLEAN .
+
+    $défaut  réduction par utilisation de la règle 26 (BaseType)
+
+
+État 27
+
+   27 BaseType: KW_CHAR .
+
+    $défaut  réduction par utilisation de la règle 27 (BaseType)
+
+
+État 28
+
+   28 BaseType: KW_STRING .
+
+    $défaut  réduction par utilisation de la règle 28 (BaseType)
+
+
+État 29
+
+   10 DeclConst: TOK_IDENT SEP_DOTS BaseType . OP_EQ Expression SEP_SCOL
+
+    OP_EQ  décalage et aller à l'état 63
+
+
+État 30
+
+  116 BoolExpr: KW_NOT . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 64
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 31
+
+  117 AtomExpr: SEP_PO . Expression SEP_PF
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 65
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 32
+
+  106 MathExpr: OP_ADD . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 66
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 33
+
+  105 MathExpr: OP_SUB . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 67
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 34
+
+   97 Expression: TOK_IDENT . SEP_PO ListeExpr SEP_PF
+  123 VarExpr: TOK_IDENT .
+
+    SEP_PO  décalage et aller à l'état 68
+
+    $défaut  réduction par utilisation de la règle 123 (VarExpr)
+
+
+État 35
+
+  118 AtomExpr: TOK_INTEGER .
+
+    $défaut  réduction par utilisation de la règle 118 (AtomExpr)
+
+
+État 36
+
+  119 AtomExpr: TOK_REAL .
+
+    $défaut  réduction par utilisation de la règle 119 (AtomExpr)
+
+
+État 37
+
+  120 AtomExpr: TOK_BOOLEAN .
+
+    $défaut  réduction par utilisation de la règle 120 (AtomExpr)
+
+
+État 38
+
+  121 AtomExpr: TOK_CHAR .
+
+    $défaut  réduction par utilisation de la règle 121 (AtomExpr)
+
+
+État 39
+
+  122 AtomExpr: TOK_STRING .
+
+    $défaut  réduction par utilisation de la règle 122 (AtomExpr)
+
+
+État 40
+
+    9 DeclConst: TOK_IDENT OP_EQ Expression . SEP_SCOL
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    SEP_SCOL  décalage et aller à l'état 74
+    OP_EQ     décalage et aller à l'état 75
+    OP_NEQ    décalage et aller à l'état 76
+    OP_LT     décalage et aller à l'état 77
+    OP_LTE    décalage et aller à l'état 78
+    OP_GT     décalage et aller à l'état 79
+    OP_GTE    décalage et aller à l'état 80
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+
+État 41
+
+   92 Expression: MathExpr .
+
+    $défaut  réduction par utilisation de la règle 92 (Expression)
+
+
+État 42
+
+   93 Expression: CompExpr .
+
+    $défaut  réduction par utilisation de la règle 93 (Expression)
+
+
+État 43
+
+   94 Expression: BoolExpr .
+
+    $défaut  réduction par utilisation de la règle 94 (Expression)
+
+
+État 44
+
+   95 Expression: AtomExpr .
+
+    $défaut  réduction par utilisation de la règle 95 (Expression)
+
+
+État 45
+
+   96 Expression: VarExpr .
+  124 VarExpr: VarExpr . SEP_CO Expression SEP_CF
+  125        | VarExpr . SEP_DOT TOK_IDENT
+
+    SEP_DOT  décalage et aller à l'état 86
+    SEP_CO   décalage et aller à l'état 87
+
+    $défaut  réduction par utilisation de la règle 96 (Expression)
+
+
+État 46
+
+   15 DeclType: TOK_IDENT OP_EQ . Type SEP_SCOL
+
+    KW_ARRAY     décalage et aller à l'état 88
+    KW_RECORD    décalage et aller à l'état 89
+    KW_INTEGER   décalage et aller à l'état 24
+    KW_REAL      décalage et aller à l'état 25
+    KW_BOOLEAN   décalage et aller à l'état 26
+    KW_CHAR      décalage et aller à l'état 27
+    KW_STRING    décalage et aller à l'état 28
+    SEP_PO       décalage et aller à l'état 90
+    TOK_IDENT    décalage et aller à l'état 91
+    TOK_INTEGER  décalage et aller à l'état 92
+    TOK_CHAR     décalage et aller à l'état 93
+
+    Type        aller à l'état 94
+    UserType    aller à l'état 95
+    SimpleType  aller à l'état 96
+    BaseType    aller à l'état 97
+    EnumType    aller à l'état 98
+    InterType   aller à l'état 99
+    InterBase   aller à l'état 100
+    ArrayType   aller à l'état 101
+    RecordType  aller à l'état 102
+
+
+État 47
+
+   13 ListDeclType: ListDeclType DeclType .
+
+    $défaut  réduction par utilisation de la règle 13 (ListDeclType)
+
+
+État 48
+
+   49 ListIdent: TOK_IDENT .
+
+    $défaut  réduction par utilisation de la règle 49 (ListIdent)
+
+
+État 49
+
+   43 BlockDeclVar: KW_VAR ListDeclVar .
+   45 ListDeclVar: ListDeclVar . DeclVar
+
+    TOK_IDENT  décalage et aller à l'état 48
+
+    $défaut  réduction par utilisation de la règle 43 (BlockDeclVar)
+
+    DeclVar    aller à l'état 103
+    ListIdent  aller à l'état 51
+
+
+État 50
+
+   46 ListDeclVar: DeclVar .
+
+    $défaut  réduction par utilisation de la règle 46 (ListDeclVar)
+
+
+État 51
+
+   47 DeclVar: ListIdent . SEP_DOTS SimpleType SEP_SCOL
+   48 ListIdent: ListIdent . SEP_COMMA TOK_IDENT
+
+    SEP_DOTS   décalage et aller à l'état 104
+    SEP_COMMA  décalage et aller à l'état 105
+
+
+État 52
+
+   59 ProcIdent: KW_PROC . TOK_IDENT
+
+    TOK_IDENT  décalage et aller à l'état 106
+
+
+État 53
+
+   70 FuncIdent: KW_FUNC . TOK_IDENT
+
+    TOK_IDENT  décalage et aller à l'état 107
+
+
+État 54
+
+    3 Block: BlockDeclConst BlockDeclType BlockDeclVar BlockDeclFunc . BlockCode
+
+    KW_BEGIN  décalage et aller à l'état 108
+
+    BlockCode  aller à l'état 109
+
+
+État 55
+
+   50 BlockDeclFunc: ListDeclFunc . SEP_SCOL
+   52 ListDeclFunc: ListDeclFunc . SEP_SCOL DeclFunc
+
+    SEP_SCOL  décalage et aller à l'état 110
+
+
+État 56
+
+   53 ListDeclFunc: DeclFunc .
+
+    $défaut  réduction par utilisation de la règle 53 (ListDeclFunc)
+
+
+État 57
+
+   54 DeclFunc: ProcDecl .
+
+    $défaut  réduction par utilisation de la règle 54 (DeclFunc)
+
+
+État 58
+
+   56 ProcDecl: ProcHeader . SEP_SCOL BlockSimple
+
+    SEP_SCOL  décalage et aller à l'état 111
+
+
+État 59
+
+   57 ProcHeader: ProcIdent .
+   58           | ProcIdent . FormalArgs
+
+    SEP_PO  décalage et aller à l'état 112
+
+    $défaut  réduction par utilisation de la règle 57 (ProcHeader)
+
+    FormalArgs  aller à l'état 113
+
+
+État 60
+
+   55 DeclFunc: FuncDecl .
+
+    $défaut  réduction par utilisation de la règle 55 (DeclFunc)
+
+
+État 61
+
+   67 FuncDecl: FuncHeader . SEP_SCOL BlockSimple
+
+    SEP_SCOL  décalage et aller à l'état 114
+
+
+État 62
+
+   68 FuncHeader: FuncIdent . FuncResult
+   69           | FuncIdent . FormalArgs FuncResult
+
+    SEP_DOTS  décalage et aller à l'état 115
+    SEP_PO    décalage et aller à l'état 112
+
+    FormalArgs  aller à l'état 116
+    FuncResult  aller à l'état 117
+
+
+État 63
+
+   10 DeclConst: TOK_IDENT SEP_DOTS BaseType OP_EQ . Expression SEP_SCOL
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 118
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 64
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+  116         | KW_NOT Expression .
+
+    OP_EXP  décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 116 (BoolExpr)
+
+
+État 65
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+  117 AtomExpr: SEP_PO Expression . SEP_PF
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    SEP_PF    décalage et aller à l'état 119
+    OP_EQ     décalage et aller à l'état 75
+    OP_NEQ    décalage et aller à l'état 76
+    OP_LT     décalage et aller à l'état 77
+    OP_LTE    décalage et aller à l'état 78
+    OP_GT     décalage et aller à l'état 79
+    OP_GTE    décalage et aller à l'état 80
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+
+État 66
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  106         | OP_ADD Expression .
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    OP_EXP  décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 106 (MathExpr)
+
+
+État 67
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  105         | OP_SUB Expression .
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    OP_EXP  décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 105 (MathExpr)
+
+
+État 68
+
+   97 Expression: TOK_IDENT SEP_PO . ListeExpr SEP_PF
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 120
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+    ListeExpr   aller à l'état 121
+
+
+État 69
+
+  102 MathExpr: Expression KW_DIV . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 122
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 70
+
+  103 MathExpr: Expression KW_MOD . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 123
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 71
+
+  113 BoolExpr: Expression KW_AND . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 124
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 72
+
+  114 BoolExpr: Expression KW_OR . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 125
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 73
+
+  115 BoolExpr: Expression KW_XOR . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 126
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 74
+
+    9 DeclConst: TOK_IDENT OP_EQ Expression SEP_SCOL .
+
+    $défaut  réduction par utilisation de la règle 9 (DeclConst)
+
+
+État 75
+
+  107 CompExpr: Expression OP_EQ . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 127
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 76
+
+  108 CompExpr: Expression OP_NEQ . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 128
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 77
+
+  109 CompExpr: Expression OP_LT . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 129
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 78
+
+  110 CompExpr: Expression OP_LTE . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 130
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 79
+
+  111 CompExpr: Expression OP_GT . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 131
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 80
+
+  112 CompExpr: Expression OP_GTE . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 132
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 81
+
+   98 MathExpr: Expression OP_ADD . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 133
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 82
+
+   99 MathExpr: Expression OP_SUB . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 134
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 83
+
+  100 MathExpr: Expression OP_MUL . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 135
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 84
+
+  101 MathExpr: Expression OP_SLASH . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 136
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 85
+
+  104 MathExpr: Expression OP_EXP . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 137
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 86
+
+  125 VarExpr: VarExpr SEP_DOT . TOK_IDENT
+
+    TOK_IDENT  décalage et aller à l'état 138
+
+
+État 87
+
+  124 VarExpr: VarExpr SEP_CO . Expression SEP_CF
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 139
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 88
+
+   36 ArrayType: KW_ARRAY . SEP_CO ArrayIndex SEP_CF KW_OF SimpleType
+
+    SEP_CO  décalage et aller à l'état 140
+
+
+État 89
+
+   39 RecordType: KW_RECORD . RecordFields KW_END
+
+    TOK_IDENT  décalage et aller à l'état 48
+
+    RecordFields  aller à l'état 141
+    RecordField   aller à l'état 142
+    ListIdent     aller à l'état 143
+
+
+État 90
+
+   29 EnumType: SEP_PO . ListEnumValue SEP_PF
+
+    TOK_IDENT  décalage et aller à l'état 144
+
+    ListEnumValue  aller à l'état 145
+
+
+État 91
+
+   23 SimpleType: TOK_IDENT .
+   33 InterBase: TOK_IDENT .
+
+    SEP_DOTDOT  réduction par utilisation de la règle 33 (InterBase)
+    $défaut    réduction par utilisation de la règle 23 (SimpleType)
+
+
+État 92
+
+   34 InterBase: TOK_INTEGER .
+
+    $défaut  réduction par utilisation de la règle 34 (InterBase)
+
+
+État 93
+
+   35 InterBase: TOK_CHAR .
+
+    $défaut  réduction par utilisation de la règle 35 (InterBase)
+
+
+État 94
+
+   15 DeclType: TOK_IDENT OP_EQ Type . SEP_SCOL
+
+    SEP_SCOL  décalage et aller à l'état 146
+
+
+État 95
+
+   16 Type: UserType .
+
+    $défaut  réduction par utilisation de la règle 16 (Type)
+
+
+État 96
+
+   17 Type: SimpleType .
+
+    $défaut  réduction par utilisation de la règle 17 (Type)
+
+
+État 97
+
+   22 SimpleType: BaseType .
+
+    $défaut  réduction par utilisation de la règle 22 (SimpleType)
+
+
+État 98
+
+   18 UserType: EnumType .
+
+    $défaut  réduction par utilisation de la règle 18 (UserType)
+
+
+État 99
+
+   19 UserType: InterType .
+
+    $défaut  réduction par utilisation de la règle 19 (UserType)
+
+
+État 100
+
+   32 InterType: InterBase . SEP_DOTDOT InterBase
+
+    SEP_DOTDOT  décalage et aller à l'état 147
+
+
+État 101
+
+   20 UserType: ArrayType .
+
+    $défaut  réduction par utilisation de la règle 20 (UserType)
+
+
+État 102
+
+   21 UserType: RecordType .
+
+    $défaut  réduction par utilisation de la règle 21 (UserType)
+
+
+État 103
+
+   45 ListDeclVar: ListDeclVar DeclVar .
+
+    $défaut  réduction par utilisation de la règle 45 (ListDeclVar)
+
+
+État 104
+
+   47 DeclVar: ListIdent SEP_DOTS . SimpleType SEP_SCOL
+
+    KW_INTEGER  décalage et aller à l'état 24
+    KW_REAL     décalage et aller à l'état 25
+    KW_BOOLEAN  décalage et aller à l'état 26
+    KW_CHAR     décalage et aller à l'état 27
+    KW_STRING   décalage et aller à l'état 28
+    TOK_IDENT   décalage et aller à l'état 148
+
+    SimpleType  aller à l'état 149
+    BaseType    aller à l'état 97
+
+
+État 105
+
+   48 ListIdent: ListIdent SEP_COMMA . TOK_IDENT
+
+    TOK_IDENT  décalage et aller à l'état 150
+
+
+État 106
+
+   59 ProcIdent: KW_PROC TOK_IDENT .
+
+    $défaut  réduction par utilisation de la règle 59 (ProcIdent)
+
+
+État 107
+
+   70 FuncIdent: KW_FUNC TOK_IDENT .
+
+    $défaut  réduction par utilisation de la règle 70 (FuncIdent)
+
+
+État 108
+
+   72 BlockCode: KW_BEGIN . ListInstr KW_END
+   73          | KW_BEGIN . ListInstr SEP_SCOL KW_END
+   74          | KW_BEGIN . KW_END
+
+    KW_BEGIN    décalage et aller à l'état 108
+    KW_END      décalage et aller à l'état 151
+    KW_IF       décalage et aller à l'état 152
+    KW_WHILE    décalage et aller à l'état 153
+    KW_REPEAT   décalage et aller à l'état 154
+    KW_FOR      décalage et aller à l'état 155
+    KW_WRITE    décalage et aller à l'état 156
+    KW_WRITELN  décalage et aller à l'état 157
+    KW_READ     décalage et aller à l'état 158
+    TOK_IDENT   décalage et aller à l'état 159
+
+    BlockCode  aller à l'état 160
+    ListInstr  aller à l'état 161
+    Instr      aller à l'état 162
+    VarExpr    aller à l'état 163
+
+
+État 109
+
+    3 Block: BlockDeclConst BlockDeclType BlockDeclVar BlockDeclFunc BlockCode .
+
+    $défaut  réduction par utilisation de la règle 3 (Block)
+
+
+État 110
+
+   50 BlockDeclFunc: ListDeclFunc SEP_SCOL .
+   52 ListDeclFunc: ListDeclFunc SEP_SCOL . DeclFunc
+
+    KW_PROC  décalage et aller à l'état 52
+    KW_FUNC  décalage et aller à l'état 53
+
+    $défaut  réduction par utilisation de la règle 50 (BlockDeclFunc)
+
+    DeclFunc    aller à l'état 164
+    ProcDecl    aller à l'état 57
+    ProcHeader  aller à l'état 58
+    ProcIdent   aller à l'état 59
+    FuncDecl    aller à l'état 60
+    FuncHeader  aller à l'état 61
+    FuncIdent   aller à l'état 62
+
+
+État 111
+
+   56 ProcDecl: ProcHeader SEP_SCOL . BlockSimple
+
+    KW_CONST  décalage et aller à l'état 7
+
+    $défaut  réduction par utilisation de la règle 6 (BlockDeclConst)
+
+    BlockSimple     aller à l'état 165
+    BlockDeclConst  aller à l'état 166
+
+
+État 112
+
+   60 FormalArgs: SEP_PO . ListFormalArgs SEP_PF
+
+    KW_VAR     décalage et aller à l'état 167
+    TOK_IDENT  décalage et aller à l'état 48
+
+    ListIdent       aller à l'état 168
+    ListFormalArgs  aller à l'état 169
+    FormalArg       aller à l'état 170
+    ValFormalArg    aller à l'état 171
+    VarFormalArg    aller à l'état 172
+
+
+État 113
+
+   58 ProcHeader: ProcIdent FormalArgs .
+
+    $défaut  réduction par utilisation de la règle 58 (ProcHeader)
+
+
+État 114
+
+   67 FuncDecl: FuncHeader SEP_SCOL . BlockSimple
+
+    KW_CONST  décalage et aller à l'état 7
+
+    $défaut  réduction par utilisation de la règle 6 (BlockDeclConst)
+
+    BlockSimple     aller à l'état 173
+    BlockDeclConst  aller à l'état 166
+
+
+État 115
+
+   71 FuncResult: SEP_DOTS . SimpleType
+
+    KW_INTEGER  décalage et aller à l'état 24
+    KW_REAL     décalage et aller à l'état 25
+    KW_BOOLEAN  décalage et aller à l'état 26
+    KW_CHAR     décalage et aller à l'état 27
+    KW_STRING   décalage et aller à l'état 28
+    TOK_IDENT   décalage et aller à l'état 148
+
+    SimpleType  aller à l'état 174
+    BaseType    aller à l'état 97
+
+
+État 116
+
+   69 FuncHeader: FuncIdent FormalArgs . FuncResult
+
+    SEP_DOTS  décalage et aller à l'état 115
+
+    FuncResult  aller à l'état 175
+
+
+État 117
+
+   68 FuncHeader: FuncIdent FuncResult .
+
+    $défaut  réduction par utilisation de la règle 68 (FuncHeader)
+
+
+État 118
+
+   10 DeclConst: TOK_IDENT SEP_DOTS BaseType OP_EQ Expression . SEP_SCOL
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    SEP_SCOL  décalage et aller à l'état 176
+    OP_EQ     décalage et aller à l'état 75
+    OP_NEQ    décalage et aller à l'état 76
+    OP_LT     décalage et aller à l'état 77
+    OP_LTE    décalage et aller à l'état 78
+    OP_GT     décalage et aller à l'état 79
+    OP_GTE    décalage et aller à l'état 80
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+
+État 119
+
+  117 AtomExpr: SEP_PO Expression SEP_PF .
+
+    $défaut  réduction par utilisation de la règle 117 (AtomExpr)
+
+
+État 120
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+  127 ListeExpr: Expression .
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    OP_EQ     décalage et aller à l'état 75
+    OP_NEQ    décalage et aller à l'état 76
+    OP_LT     décalage et aller à l'état 77
+    OP_LTE    décalage et aller à l'état 78
+    OP_GT     décalage et aller à l'état 79
+    OP_GTE    décalage et aller à l'état 80
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 127 (ListeExpr)
+
+
+État 121
+
+   97 Expression: TOK_IDENT SEP_PO ListeExpr . SEP_PF
+  126 ListeExpr: ListeExpr . SEP_COMMA Expression
+
+    SEP_COMMA  décalage et aller à l'état 177
+    SEP_PF     décalage et aller à l'état 178
+
+
+État 122
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  102         | Expression KW_DIV Expression .
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    OP_EXP  décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 102 (MathExpr)
+
+
+État 123
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  103         | Expression KW_MOD Expression .
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    OP_EXP  décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 103 (MathExpr)
+
+
+État 124
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  113         | Expression KW_AND Expression .
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    OP_EXP  décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 113 (BoolExpr)
+
+
+État 125
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  114         | Expression KW_OR Expression .
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 114 (BoolExpr)
+
+
+État 126
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+  115         | Expression KW_XOR Expression .
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 115 (BoolExpr)
+
+
+État 127
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  107         | Expression OP_EQ Expression .
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    OP_EQ   erreur (non-associative)
+    OP_NEQ  erreur (non-associative)
+    OP_LT   erreur (non-associative)
+    OP_LTE  erreur (non-associative)
+    OP_GT   erreur (non-associative)
+    OP_GTE  erreur (non-associative)
+
+    $défaut  réduction par utilisation de la règle 107 (CompExpr)
+
+
+État 128
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  108         | Expression OP_NEQ Expression .
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    OP_EQ   erreur (non-associative)
+    OP_NEQ  erreur (non-associative)
+    OP_LT   erreur (non-associative)
+    OP_LTE  erreur (non-associative)
+    OP_GT   erreur (non-associative)
+    OP_GTE  erreur (non-associative)
+
+    $défaut  réduction par utilisation de la règle 108 (CompExpr)
+
+
+État 129
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  109         | Expression OP_LT Expression .
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    OP_EQ   erreur (non-associative)
+    OP_NEQ  erreur (non-associative)
+    OP_LT   erreur (non-associative)
+    OP_LTE  erreur (non-associative)
+    OP_GT   erreur (non-associative)
+    OP_GTE  erreur (non-associative)
+
+    $défaut  réduction par utilisation de la règle 109 (CompExpr)
+
+
+État 130
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  110         | Expression OP_LTE Expression .
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    OP_EQ   erreur (non-associative)
+    OP_NEQ  erreur (non-associative)
+    OP_LT   erreur (non-associative)
+    OP_LTE  erreur (non-associative)
+    OP_GT   erreur (non-associative)
+    OP_GTE  erreur (non-associative)
+
+    $défaut  réduction par utilisation de la règle 110 (CompExpr)
+
+
+État 131
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  111         | Expression OP_GT Expression .
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    OP_EQ   erreur (non-associative)
+    OP_NEQ  erreur (non-associative)
+    OP_LT   erreur (non-associative)
+    OP_LTE  erreur (non-associative)
+    OP_GT   erreur (non-associative)
+    OP_GTE  erreur (non-associative)
+
+    $défaut  réduction par utilisation de la règle 111 (CompExpr)
+
+
+État 132
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  112         | Expression OP_GTE Expression .
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    OP_EQ   erreur (non-associative)
+    OP_NEQ  erreur (non-associative)
+    OP_LT   erreur (non-associative)
+    OP_LTE  erreur (non-associative)
+    OP_GT   erreur (non-associative)
+    OP_GTE  erreur (non-associative)
+
+    $défaut  réduction par utilisation de la règle 112 (CompExpr)
+
+
+État 133
+
+   98 MathExpr: Expression . OP_ADD Expression
+   98         | Expression OP_ADD Expression .
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 98 (MathExpr)
+
+
+État 134
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+   99         | Expression OP_SUB Expression .
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 99 (MathExpr)
+
+
+État 135
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  100         | Expression OP_MUL Expression .
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    OP_EXP  décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 100 (MathExpr)
+
+
+État 136
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  101         | Expression OP_SLASH Expression .
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    OP_EXP  décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 101 (MathExpr)
+
+
+État 137
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  104         | Expression OP_EXP Expression .
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    $défaut  réduction par utilisation de la règle 104 (MathExpr)
+
+
+État 138
+
+  125 VarExpr: VarExpr SEP_DOT TOK_IDENT .
+
+    $défaut  réduction par utilisation de la règle 125 (VarExpr)
+
+
+État 139
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+  124 VarExpr: VarExpr SEP_CO Expression . SEP_CF
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    SEP_CF    décalage et aller à l'état 179
+    OP_EQ     décalage et aller à l'état 75
+    OP_NEQ    décalage et aller à l'état 76
+    OP_LT     décalage et aller à l'état 77
+    OP_LTE    décalage et aller à l'état 78
+    OP_GT     décalage et aller à l'état 79
+    OP_GTE    décalage et aller à l'état 80
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+
+État 140
+
+   36 ArrayType: KW_ARRAY SEP_CO . ArrayIndex SEP_CF KW_OF SimpleType
+
+    TOK_IDENT    décalage et aller à l'état 180
+    TOK_INTEGER  décalage et aller à l'état 92
+    TOK_CHAR     décalage et aller à l'état 93
+
+    InterType   aller à l'état 181
+    InterBase   aller à l'état 100
+    ArrayIndex  aller à l'état 182
+
+
+État 141
+
+   39 RecordType: KW_RECORD RecordFields . KW_END
+   40 RecordFields: RecordFields . SEP_SCOL RecordField
+
+    KW_END    décalage et aller à l'état 183
+    SEP_SCOL  décalage et aller à l'état 184
+
+
+État 142
+
+   41 RecordFields: RecordField .
+
+    $défaut  réduction par utilisation de la règle 41 (RecordFields)
+
+
+État 143
+
+   42 RecordField: ListIdent . SEP_DOTS SimpleType
+   48 ListIdent: ListIdent . SEP_COMMA TOK_IDENT
+
+    SEP_DOTS   décalage et aller à l'état 185
+    SEP_COMMA  décalage et aller à l'état 105
+
+
+État 144
+
+   31 ListEnumValue: TOK_IDENT .
+
+    $défaut  réduction par utilisation de la règle 31 (ListEnumValue)
+
+
+État 145
+
+   29 EnumType: SEP_PO ListEnumValue . SEP_PF
+   30 ListEnumValue: ListEnumValue . SEP_COMMA TOK_IDENT
+
+    SEP_COMMA  décalage et aller à l'état 186
+    SEP_PF     décalage et aller à l'état 187
+
+
+État 146
+
+   15 DeclType: TOK_IDENT OP_EQ Type SEP_SCOL .
+
+    $défaut  réduction par utilisation de la règle 15 (DeclType)
+
+
+État 147
+
+   32 InterType: InterBase SEP_DOTDOT . InterBase
+
+    TOK_IDENT    décalage et aller à l'état 188
+    TOK_INTEGER  décalage et aller à l'état 92
+    TOK_CHAR     décalage et aller à l'état 93
+
+    InterBase  aller à l'état 189
+
+
+État 148
+
+   23 SimpleType: TOK_IDENT .
+
+    $défaut  réduction par utilisation de la règle 23 (SimpleType)
+
+
+État 149
+
+   47 DeclVar: ListIdent SEP_DOTS SimpleType . SEP_SCOL
+
+    SEP_SCOL  décalage et aller à l'état 190
+
+
+État 150
+
+   48 ListIdent: ListIdent SEP_COMMA TOK_IDENT .
+
+    $défaut  réduction par utilisation de la règle 48 (ListIdent)
+
+
+État 151
+
+   74 BlockCode: KW_BEGIN KW_END .
+
+    $défaut  réduction par utilisation de la règle 74 (BlockCode)
+
+
+État 152
+
+   80 Instr: KW_IF . Expression KW_THEN Instr
+   81      | KW_IF . Expression KW_THEN Instr KW_ELSE Instr
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 191
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 153
+
+   77 Instr: KW_WHILE . Expression KW_DO Instr
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 192
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 154
+
+   78 Instr: KW_REPEAT . ListInstr KW_UNTIL Expression
+
+    KW_BEGIN    décalage et aller à l'état 108
+    KW_IF       décalage et aller à l'état 152
+    KW_WHILE    décalage et aller à l'état 153
+    KW_REPEAT   décalage et aller à l'état 154
+    KW_FOR      décalage et aller à l'état 155
+    KW_WRITE    décalage et aller à l'état 156
+    KW_WRITELN  décalage et aller à l'état 157
+    KW_READ     décalage et aller à l'état 158
+    TOK_IDENT   décalage et aller à l'état 159
+
+    BlockCode  aller à l'état 160
+    ListInstr  aller à l'état 193
+    Instr      aller à l'état 162
+    VarExpr    aller à l'état 163
+
+
+État 155
+
+   79 Instr: KW_FOR . TOK_IDENT OP_AFFECT Expression ForDirection Expression KW_DO Instr
+
+    TOK_IDENT  décalage et aller à l'état 194
+
+
+État 156
+
+   85 Instr: KW_WRITE . SEP_PO ListeExpr SEP_PF
+
+    SEP_PO  décalage et aller à l'état 195
+
+
+État 157
+
+   86 Instr: KW_WRITELN . SEP_PO ListeExpr SEP_PF
+   88      | KW_WRITELN .
+
+    SEP_PO  décalage et aller à l'état 196
+
+    $défaut  réduction par utilisation de la règle 88 (Instr)
+
+
+État 158
+
+   87 Instr: KW_READ . SEP_PO VarExpr SEP_PF
+
+    SEP_PO  décalage et aller à l'état 197
+
+
+État 159
+
+   83 Instr: TOK_IDENT . SEP_PO ListeExpr SEP_PF
+   84      | TOK_IDENT .
+  123 VarExpr: TOK_IDENT .
+
+    SEP_PO  décalage et aller à l'état 198
+
+    SEP_DOT    réduction par utilisation de la règle 123 (VarExpr)
+    SEP_CO     réduction par utilisation de la règle 123 (VarExpr)
+    OP_AFFECT  réduction par utilisation de la règle 123 (VarExpr)
+    $défaut   réduction par utilisation de la règle 84 (Instr)
+
+
+État 160
+
+   89 Instr: BlockCode .
+
+    $défaut  réduction par utilisation de la règle 89 (Instr)
+
+
+État 161
+
+   72 BlockCode: KW_BEGIN ListInstr . KW_END
+   73          | KW_BEGIN ListInstr . SEP_SCOL KW_END
+   75 ListInstr: ListInstr . SEP_SCOL Instr
+
+    KW_END    décalage et aller à l'état 199
+    SEP_SCOL  décalage et aller à l'état 200
+
+
+État 162
+
+   76 ListInstr: Instr .
+
+    $défaut  réduction par utilisation de la règle 76 (ListInstr)
+
+
+État 163
+
+   82 Instr: VarExpr . OP_AFFECT Expression
+  124 VarExpr: VarExpr . SEP_CO Expression SEP_CF
+  125        | VarExpr . SEP_DOT TOK_IDENT
+
+    SEP_DOT    décalage et aller à l'état 86
+    SEP_CO     décalage et aller à l'état 87
+    OP_AFFECT  décalage et aller à l'état 201
+
+
+État 164
+
+   52 ListDeclFunc: ListDeclFunc SEP_SCOL DeclFunc .
+
+    $défaut  réduction par utilisation de la règle 52 (ListDeclFunc)
+
+
+État 165
+
+   56 ProcDecl: ProcHeader SEP_SCOL BlockSimple .
+
+    $défaut  réduction par utilisation de la règle 56 (ProcDecl)
+
+
+État 166
+
+    4 BlockSimple: BlockDeclConst . BlockDeclType BlockDeclVar BlockCode
+
+    KW_TYPE  décalage et aller à l'état 14
+
+    $défaut  réduction par utilisation de la règle 12 (BlockDeclType)
+
+    BlockDeclType  aller à l'état 202
+
+
+État 167
+
+   66 VarFormalArg: KW_VAR . ListIdent SEP_DOTS SimpleType
+
+    TOK_IDENT  décalage et aller à l'état 48
+
+    ListIdent  aller à l'état 203
+
+
+État 168
+
+   48 ListIdent: ListIdent . SEP_COMMA TOK_IDENT
+   65 ValFormalArg: ListIdent . SEP_DOTS SimpleType
+
+    SEP_DOTS   décalage et aller à l'état 204
+    SEP_COMMA  décalage et aller à l'état 105
+
+
+État 169
+
+   60 FormalArgs: SEP_PO ListFormalArgs . SEP_PF
+   61 ListFormalArgs: ListFormalArgs . SEP_SCOL FormalArg
+
+    SEP_SCOL  décalage et aller à l'état 205
+    SEP_PF    décalage et aller à l'état 206
+
+
+État 170
+
+   62 ListFormalArgs: FormalArg .
+
+    $défaut  réduction par utilisation de la règle 62 (ListFormalArgs)
+
+
+État 171
+
+   63 FormalArg: ValFormalArg .
+
+    $défaut  réduction par utilisation de la règle 63 (FormalArg)
+
+
+État 172
+
+   64 FormalArg: VarFormalArg .
+
+    $défaut  réduction par utilisation de la règle 64 (FormalArg)
+
+
+État 173
+
+   67 FuncDecl: FuncHeader SEP_SCOL BlockSimple .
+
+    $défaut  réduction par utilisation de la règle 67 (FuncDecl)
+
+
+État 174
+
+   71 FuncResult: SEP_DOTS SimpleType .
+
+    $défaut  réduction par utilisation de la règle 71 (FuncResult)
+
+
+État 175
+
+   69 FuncHeader: FuncIdent FormalArgs FuncResult .
+
+    $défaut  réduction par utilisation de la règle 69 (FuncHeader)
+
+
+État 176
+
+   10 DeclConst: TOK_IDENT SEP_DOTS BaseType OP_EQ Expression SEP_SCOL .
+
+    $défaut  réduction par utilisation de la règle 10 (DeclConst)
+
+
+État 177
+
+  126 ListeExpr: ListeExpr SEP_COMMA . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 207
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 178
+
+   97 Expression: TOK_IDENT SEP_PO ListeExpr SEP_PF .
+
+    $défaut  réduction par utilisation de la règle 97 (Expression)
+
+
+État 179
+
+  124 VarExpr: VarExpr SEP_CO Expression SEP_CF .
+
+    $défaut  réduction par utilisation de la règle 124 (VarExpr)
+
+
+État 180
+
+   33 InterBase: TOK_IDENT .
+   37 ArrayIndex: TOK_IDENT .
+
+    SEP_CF    réduction par utilisation de la règle 37 (ArrayIndex)
+    $défaut  réduction par utilisation de la règle 33 (InterBase)
+
+
+État 181
+
+   38 ArrayIndex: InterType .
+
+    $défaut  réduction par utilisation de la règle 38 (ArrayIndex)
+
+
+État 182
+
+   36 ArrayType: KW_ARRAY SEP_CO ArrayIndex . SEP_CF KW_OF SimpleType
+
+    SEP_CF  décalage et aller à l'état 208
+
+
+État 183
+
+   39 RecordType: KW_RECORD RecordFields KW_END .
+
+    $défaut  réduction par utilisation de la règle 39 (RecordType)
+
+
+État 184
+
+   40 RecordFields: RecordFields SEP_SCOL . RecordField
+
+    TOK_IDENT  décalage et aller à l'état 48
+
+    RecordField  aller à l'état 209
+    ListIdent    aller à l'état 143
+
+
+État 185
+
+   42 RecordField: ListIdent SEP_DOTS . SimpleType
+
+    KW_INTEGER  décalage et aller à l'état 24
+    KW_REAL     décalage et aller à l'état 25
+    KW_BOOLEAN  décalage et aller à l'état 26
+    KW_CHAR     décalage et aller à l'état 27
+    KW_STRING   décalage et aller à l'état 28
+    TOK_IDENT   décalage et aller à l'état 148
+
+    SimpleType  aller à l'état 210
+    BaseType    aller à l'état 97
+
+
+État 186
+
+   30 ListEnumValue: ListEnumValue SEP_COMMA . TOK_IDENT
+
+    TOK_IDENT  décalage et aller à l'état 211
+
+
+État 187
+
+   29 EnumType: SEP_PO ListEnumValue SEP_PF .
+
+    $défaut  réduction par utilisation de la règle 29 (EnumType)
+
+
+État 188
+
+   33 InterBase: TOK_IDENT .
+
+    $défaut  réduction par utilisation de la règle 33 (InterBase)
+
+
+État 189
+
+   32 InterType: InterBase SEP_DOTDOT InterBase .
+
+    $défaut  réduction par utilisation de la règle 32 (InterType)
+
+
+État 190
+
+   47 DeclVar: ListIdent SEP_DOTS SimpleType SEP_SCOL .
+
+    $défaut  réduction par utilisation de la règle 47 (DeclVar)
+
+
+État 191
+
+   80 Instr: KW_IF Expression . KW_THEN Instr
+   81      | KW_IF Expression . KW_THEN Instr KW_ELSE Instr
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    KW_THEN   décalage et aller à l'état 212
+    OP_EQ     décalage et aller à l'état 75
+    OP_NEQ    décalage et aller à l'état 76
+    OP_LT     décalage et aller à l'état 77
+    OP_LTE    décalage et aller à l'état 78
+    OP_GT     décalage et aller à l'état 79
+    OP_GTE    décalage et aller à l'état 80
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+
+État 192
+
+   77 Instr: KW_WHILE Expression . KW_DO Instr
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    KW_DO     décalage et aller à l'état 213
+    OP_EQ     décalage et aller à l'état 75
+    OP_NEQ    décalage et aller à l'état 76
+    OP_LT     décalage et aller à l'état 77
+    OP_LTE    décalage et aller à l'état 78
+    OP_GT     décalage et aller à l'état 79
+    OP_GTE    décalage et aller à l'état 80
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+
+État 193
+
+   75 ListInstr: ListInstr . SEP_SCOL Instr
+   78 Instr: KW_REPEAT ListInstr . KW_UNTIL Expression
+
+    KW_UNTIL  décalage et aller à l'état 214
+    SEP_SCOL  décalage et aller à l'état 215
+
+
+État 194
+
+   79 Instr: KW_FOR TOK_IDENT . OP_AFFECT Expression ForDirection Expression KW_DO Instr
+
+    OP_AFFECT  décalage et aller à l'état 216
+
+
+État 195
+
+   85 Instr: KW_WRITE SEP_PO . ListeExpr SEP_PF
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 120
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+    ListeExpr   aller à l'état 217
+
+
+État 196
+
+   86 Instr: KW_WRITELN SEP_PO . ListeExpr SEP_PF
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 120
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+    ListeExpr   aller à l'état 218
+
+
+État 197
+
+   87 Instr: KW_READ SEP_PO . VarExpr SEP_PF
+
+    TOK_IDENT  décalage et aller à l'état 219
+
+    VarExpr  aller à l'état 220
+
+
+État 198
+
+   83 Instr: TOK_IDENT SEP_PO . ListeExpr SEP_PF
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 120
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+    ListeExpr   aller à l'état 221
+
+
+État 199
+
+   72 BlockCode: KW_BEGIN ListInstr KW_END .
+
+    $défaut  réduction par utilisation de la règle 72 (BlockCode)
+
+
+État 200
+
+   73 BlockCode: KW_BEGIN ListInstr SEP_SCOL . KW_END
+   75 ListInstr: ListInstr SEP_SCOL . Instr
+
+    KW_BEGIN    décalage et aller à l'état 108
+    KW_END      décalage et aller à l'état 222
+    KW_IF       décalage et aller à l'état 152
+    KW_WHILE    décalage et aller à l'état 153
+    KW_REPEAT   décalage et aller à l'état 154
+    KW_FOR      décalage et aller à l'état 155
+    KW_WRITE    décalage et aller à l'état 156
+    KW_WRITELN  décalage et aller à l'état 157
+    KW_READ     décalage et aller à l'état 158
+    TOK_IDENT   décalage et aller à l'état 159
+
+    BlockCode  aller à l'état 160
+    Instr      aller à l'état 223
+    VarExpr    aller à l'état 163
+
+
+État 201
+
+   82 Instr: VarExpr OP_AFFECT . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 224
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 202
+
+    4 BlockSimple: BlockDeclConst BlockDeclType . BlockDeclVar BlockCode
+
+    KW_VAR  décalage et aller à l'état 22
+
+    $défaut  réduction par utilisation de la règle 44 (BlockDeclVar)
+
+    BlockDeclVar  aller à l'état 225
+
+
+État 203
+
+   48 ListIdent: ListIdent . SEP_COMMA TOK_IDENT
+   66 VarFormalArg: KW_VAR ListIdent . SEP_DOTS SimpleType
+
+    SEP_DOTS   décalage et aller à l'état 226
+    SEP_COMMA  décalage et aller à l'état 105
+
+
+État 204
+
+   65 ValFormalArg: ListIdent SEP_DOTS . SimpleType
+
+    KW_INTEGER  décalage et aller à l'état 24
+    KW_REAL     décalage et aller à l'état 25
+    KW_BOOLEAN  décalage et aller à l'état 26
+    KW_CHAR     décalage et aller à l'état 27
+    KW_STRING   décalage et aller à l'état 28
+    TOK_IDENT   décalage et aller à l'état 148
+
+    SimpleType  aller à l'état 227
+    BaseType    aller à l'état 97
+
+
+État 205
+
+   61 ListFormalArgs: ListFormalArgs SEP_SCOL . FormalArg
+
+    KW_VAR     décalage et aller à l'état 167
+    TOK_IDENT  décalage et aller à l'état 48
+
+    ListIdent     aller à l'état 168
+    FormalArg     aller à l'état 228
+    ValFormalArg  aller à l'état 171
+    VarFormalArg  aller à l'état 172
+
+
+État 206
+
+   60 FormalArgs: SEP_PO ListFormalArgs SEP_PF .
+
+    $défaut  réduction par utilisation de la règle 60 (FormalArgs)
+
+
+État 207
+
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+  126 ListeExpr: ListeExpr SEP_COMMA Expression .
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    OP_EQ     décalage et aller à l'état 75
+    OP_NEQ    décalage et aller à l'état 76
+    OP_LT     décalage et aller à l'état 77
+    OP_LTE    décalage et aller à l'état 78
+    OP_GT     décalage et aller à l'état 79
+    OP_GTE    décalage et aller à l'état 80
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 126 (ListeExpr)
+
+
+État 208
+
+   36 ArrayType: KW_ARRAY SEP_CO ArrayIndex SEP_CF . KW_OF SimpleType
+
+    KW_OF  décalage et aller à l'état 229
+
+
+État 209
+
+   40 RecordFields: RecordFields SEP_SCOL RecordField .
+
+    $défaut  réduction par utilisation de la règle 40 (RecordFields)
+
+
+État 210
+
+   42 RecordField: ListIdent SEP_DOTS SimpleType .
+
+    $défaut  réduction par utilisation de la règle 42 (RecordField)
+
+
+État 211
+
+   30 ListEnumValue: ListEnumValue SEP_COMMA TOK_IDENT .
+
+    $défaut  réduction par utilisation de la règle 30 (ListEnumValue)
+
+
+État 212
+
+   80 Instr: KW_IF Expression KW_THEN . Instr
+   81      | KW_IF Expression KW_THEN . Instr KW_ELSE Instr
+
+    KW_BEGIN    décalage et aller à l'état 108
+    KW_IF       décalage et aller à l'état 152
+    KW_WHILE    décalage et aller à l'état 153
+    KW_REPEAT   décalage et aller à l'état 154
+    KW_FOR      décalage et aller à l'état 155
+    KW_WRITE    décalage et aller à l'état 156
+    KW_WRITELN  décalage et aller à l'état 157
+    KW_READ     décalage et aller à l'état 158
+    TOK_IDENT   décalage et aller à l'état 159
+
+    BlockCode  aller à l'état 160
+    Instr      aller à l'état 230
+    VarExpr    aller à l'état 163
+
+
+État 213
+
+   77 Instr: KW_WHILE Expression KW_DO . Instr
+
+    KW_BEGIN    décalage et aller à l'état 108
+    KW_IF       décalage et aller à l'état 152
+    KW_WHILE    décalage et aller à l'état 153
+    KW_REPEAT   décalage et aller à l'état 154
+    KW_FOR      décalage et aller à l'état 155
+    KW_WRITE    décalage et aller à l'état 156
+    KW_WRITELN  décalage et aller à l'état 157
+    KW_READ     décalage et aller à l'état 158
+    TOK_IDENT   décalage et aller à l'état 159
+
+    BlockCode  aller à l'état 160
+    Instr      aller à l'état 231
+    VarExpr    aller à l'état 163
+
+
+État 214
+
+   78 Instr: KW_REPEAT ListInstr KW_UNTIL . Expression
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 232
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 215
+
+   75 ListInstr: ListInstr SEP_SCOL . Instr
+
+    KW_BEGIN    décalage et aller à l'état 108
+    KW_IF       décalage et aller à l'état 152
+    KW_WHILE    décalage et aller à l'état 153
+    KW_REPEAT   décalage et aller à l'état 154
+    KW_FOR      décalage et aller à l'état 155
+    KW_WRITE    décalage et aller à l'état 156
+    KW_WRITELN  décalage et aller à l'état 157
+    KW_READ     décalage et aller à l'état 158
+    TOK_IDENT   décalage et aller à l'état 159
+
+    BlockCode  aller à l'état 160
+    Instr      aller à l'état 223
+    VarExpr    aller à l'état 163
+
+
+État 216
+
+   79 Instr: KW_FOR TOK_IDENT OP_AFFECT . Expression ForDirection Expression KW_DO Instr
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 233
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 217
+
+   85 Instr: KW_WRITE SEP_PO ListeExpr . SEP_PF
+  126 ListeExpr: ListeExpr . SEP_COMMA Expression
+
+    SEP_COMMA  décalage et aller à l'état 177
+    SEP_PF     décalage et aller à l'état 234
+
+
+État 218
+
+   86 Instr: KW_WRITELN SEP_PO ListeExpr . SEP_PF
+  126 ListeExpr: ListeExpr . SEP_COMMA Expression
+
+    SEP_COMMA  décalage et aller à l'état 177
+    SEP_PF     décalage et aller à l'état 235
+
+
+État 219
+
+  123 VarExpr: TOK_IDENT .
+
+    $défaut  réduction par utilisation de la règle 123 (VarExpr)
+
+
+État 220
+
+   87 Instr: KW_READ SEP_PO VarExpr . SEP_PF
+  124 VarExpr: VarExpr . SEP_CO Expression SEP_CF
+  125        | VarExpr . SEP_DOT TOK_IDENT
+
+    SEP_DOT  décalage et aller à l'état 86
+    SEP_CO   décalage et aller à l'état 87
+    SEP_PF   décalage et aller à l'état 236
+
+
+État 221
+
+   83 Instr: TOK_IDENT SEP_PO ListeExpr . SEP_PF
+  126 ListeExpr: ListeExpr . SEP_COMMA Expression
+
+    SEP_COMMA  décalage et aller à l'état 177
+    SEP_PF     décalage et aller à l'état 237
+
+
+État 222
+
+   73 BlockCode: KW_BEGIN ListInstr SEP_SCOL KW_END .
+
+    $défaut  réduction par utilisation de la règle 73 (BlockCode)
+
+
+État 223
+
+   75 ListInstr: ListInstr SEP_SCOL Instr .
+
+    $défaut  réduction par utilisation de la règle 75 (ListInstr)
+
+
+État 224
+
+   82 Instr: VarExpr OP_AFFECT Expression .
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    OP_EQ     décalage et aller à l'état 75
+    OP_NEQ    décalage et aller à l'état 76
+    OP_LT     décalage et aller à l'état 77
+    OP_LTE    décalage et aller à l'état 78
+    OP_GT     décalage et aller à l'état 79
+    OP_GTE    décalage et aller à l'état 80
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 82 (Instr)
+
+
+État 225
+
+    4 BlockSimple: BlockDeclConst BlockDeclType BlockDeclVar . BlockCode
+
+    KW_BEGIN  décalage et aller à l'état 108
+
+    BlockCode  aller à l'état 238
+
+
+État 226
+
+   66 VarFormalArg: KW_VAR ListIdent SEP_DOTS . SimpleType
+
+    KW_INTEGER  décalage et aller à l'état 24
+    KW_REAL     décalage et aller à l'état 25
+    KW_BOOLEAN  décalage et aller à l'état 26
+    KW_CHAR     décalage et aller à l'état 27
+    KW_STRING   décalage et aller à l'état 28
+    TOK_IDENT   décalage et aller à l'état 148
+
+    SimpleType  aller à l'état 239
+    BaseType    aller à l'état 97
+
+
+État 227
+
+   65 ValFormalArg: ListIdent SEP_DOTS SimpleType .
+
+    $défaut  réduction par utilisation de la règle 65 (ValFormalArg)
+
+
+État 228
+
+   61 ListFormalArgs: ListFormalArgs SEP_SCOL FormalArg .
+
+    $défaut  réduction par utilisation de la règle 61 (ListFormalArgs)
+
+
+État 229
+
+   36 ArrayType: KW_ARRAY SEP_CO ArrayIndex SEP_CF KW_OF . SimpleType
+
+    KW_INTEGER  décalage et aller à l'état 24
+    KW_REAL     décalage et aller à l'état 25
+    KW_BOOLEAN  décalage et aller à l'état 26
+    KW_CHAR     décalage et aller à l'état 27
+    KW_STRING   décalage et aller à l'état 28
+    TOK_IDENT   décalage et aller à l'état 148
+
+    SimpleType  aller à l'état 240
+    BaseType    aller à l'état 97
+
+
+État 230
+
+   80 Instr: KW_IF Expression KW_THEN Instr .
+   81      | KW_IF Expression KW_THEN Instr . KW_ELSE Instr
+
+    KW_ELSE  décalage et aller à l'état 241
+
+    $défaut  réduction par utilisation de la règle 80 (Instr)
+
+
+État 231
+
+   77 Instr: KW_WHILE Expression KW_DO Instr .
+
+    $défaut  réduction par utilisation de la règle 77 (Instr)
+
+
+État 232
+
+   78 Instr: KW_REPEAT ListInstr KW_UNTIL Expression .
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    OP_EQ     décalage et aller à l'état 75
+    OP_NEQ    décalage et aller à l'état 76
+    OP_LT     décalage et aller à l'état 77
+    OP_LTE    décalage et aller à l'état 78
+    OP_GT     décalage et aller à l'état 79
+    OP_GTE    décalage et aller à l'état 80
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+    $défaut  réduction par utilisation de la règle 78 (Instr)
+
+
+État 233
+
+   79 Instr: KW_FOR TOK_IDENT OP_AFFECT Expression . ForDirection Expression KW_DO Instr
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV     décalage et aller à l'état 69
+    KW_MOD     décalage et aller à l'état 70
+    KW_AND     décalage et aller à l'état 71
+    KW_OR      décalage et aller à l'état 72
+    KW_XOR     décalage et aller à l'état 73
+    KW_TO      décalage et aller à l'état 242
+    KW_DOWNTO  décalage et aller à l'état 243
+    OP_EQ      décalage et aller à l'état 75
+    OP_NEQ     décalage et aller à l'état 76
+    OP_LT      décalage et aller à l'état 77
+    OP_LTE     décalage et aller à l'état 78
+    OP_GT      décalage et aller à l'état 79
+    OP_GTE     décalage et aller à l'état 80
+    OP_ADD     décalage et aller à l'état 81
+    OP_SUB     décalage et aller à l'état 82
+    OP_MUL     décalage et aller à l'état 83
+    OP_SLASH   décalage et aller à l'état 84
+    OP_EXP     décalage et aller à l'état 85
+
+    ForDirection  aller à l'état 244
+
+
+État 234
+
+   85 Instr: KW_WRITE SEP_PO ListeExpr SEP_PF .
+
+    $défaut  réduction par utilisation de la règle 85 (Instr)
+
+
+État 235
+
+   86 Instr: KW_WRITELN SEP_PO ListeExpr SEP_PF .
+
+    $défaut  réduction par utilisation de la règle 86 (Instr)
+
+
+État 236
+
+   87 Instr: KW_READ SEP_PO VarExpr SEP_PF .
+
+    $défaut  réduction par utilisation de la règle 87 (Instr)
+
+
+État 237
+
+   83 Instr: TOK_IDENT SEP_PO ListeExpr SEP_PF .
+
+    $défaut  réduction par utilisation de la règle 83 (Instr)
+
+
+État 238
+
+    4 BlockSimple: BlockDeclConst BlockDeclType BlockDeclVar BlockCode .
+
+    $défaut  réduction par utilisation de la règle 4 (BlockSimple)
+
+
+État 239
+
+   66 VarFormalArg: KW_VAR ListIdent SEP_DOTS SimpleType .
+
+    $défaut  réduction par utilisation de la règle 66 (VarFormalArg)
+
+
+État 240
+
+   36 ArrayType: KW_ARRAY SEP_CO ArrayIndex SEP_CF KW_OF SimpleType .
+
+    $défaut  réduction par utilisation de la règle 36 (ArrayType)
+
+
+État 241
+
+   81 Instr: KW_IF Expression KW_THEN Instr KW_ELSE . Instr
+
+    KW_BEGIN    décalage et aller à l'état 108
+    KW_IF       décalage et aller à l'état 152
+    KW_WHILE    décalage et aller à l'état 153
+    KW_REPEAT   décalage et aller à l'état 154
+    KW_FOR      décalage et aller à l'état 155
+    KW_WRITE    décalage et aller à l'état 156
+    KW_WRITELN  décalage et aller à l'état 157
+    KW_READ     décalage et aller à l'état 158
+    TOK_IDENT   décalage et aller à l'état 159
+
+    BlockCode  aller à l'état 160
+    Instr      aller à l'état 245
+    VarExpr    aller à l'état 163
+
+
+État 242
+
+   90 ForDirection: KW_TO .
+
+    $défaut  réduction par utilisation de la règle 90 (ForDirection)
+
+
+État 243
+
+   91 ForDirection: KW_DOWNTO .
+
+    $défaut  réduction par utilisation de la règle 91 (ForDirection)
+
+
+État 244
+
+   79 Instr: KW_FOR TOK_IDENT OP_AFFECT Expression ForDirection . Expression KW_DO Instr
+
+    KW_NOT       décalage et aller à l'état 30
+    SEP_PO       décalage et aller à l'état 31
+    OP_ADD       décalage et aller à l'état 32
+    OP_SUB       décalage et aller à l'état 33
+    TOK_IDENT    décalage et aller à l'état 34
+    TOK_INTEGER  décalage et aller à l'état 35
+    TOK_REAL     décalage et aller à l'état 36
+    TOK_BOOLEAN  décalage et aller à l'état 37
+    TOK_CHAR     décalage et aller à l'état 38
+    TOK_STRING   décalage et aller à l'état 39
+
+    Expression  aller à l'état 246
+    MathExpr    aller à l'état 41
+    CompExpr    aller à l'état 42
+    BoolExpr    aller à l'état 43
+    AtomExpr    aller à l'état 44
+    VarExpr     aller à l'état 45
+
+
+État 245
+
+   81 Instr: KW_IF Expression KW_THEN Instr KW_ELSE Instr .
+
+    $défaut  réduction par utilisation de la règle 81 (Instr)
+
+
+État 246
+
+   79 Instr: KW_FOR TOK_IDENT OP_AFFECT Expression ForDirection Expression . KW_DO Instr
+   98 MathExpr: Expression . OP_ADD Expression
+   99         | Expression . OP_SUB Expression
+  100         | Expression . OP_MUL Expression
+  101         | Expression . OP_SLASH Expression
+  102         | Expression . KW_DIV Expression
+  103         | Expression . KW_MOD Expression
+  104         | Expression . OP_EXP Expression
+  107 CompExpr: Expression . OP_EQ Expression
+  108         | Expression . OP_NEQ Expression
+  109         | Expression . OP_LT Expression
+  110         | Expression . OP_LTE Expression
+  111         | Expression . OP_GT Expression
+  112         | Expression . OP_GTE Expression
+  113 BoolExpr: Expression . KW_AND Expression
+  114         | Expression . KW_OR Expression
+  115         | Expression . KW_XOR Expression
+
+    KW_DIV    décalage et aller à l'état 69
+    KW_MOD    décalage et aller à l'état 70
+    KW_AND    décalage et aller à l'état 71
+    KW_OR     décalage et aller à l'état 72
+    KW_XOR    décalage et aller à l'état 73
+    KW_DO     décalage et aller à l'état 247
+    OP_EQ     décalage et aller à l'état 75
+    OP_NEQ    décalage et aller à l'état 76
+    OP_LT     décalage et aller à l'état 77
+    OP_LTE    décalage et aller à l'état 78
+    OP_GT     décalage et aller à l'état 79
+    OP_GTE    décalage et aller à l'état 80
+    OP_ADD    décalage et aller à l'état 81
+    OP_SUB    décalage et aller à l'état 82
+    OP_MUL    décalage et aller à l'état 83
+    OP_SLASH  décalage et aller à l'état 84
+    OP_EXP    décalage et aller à l'état 85
+
+
+État 247
+
+   79 Instr: KW_FOR TOK_IDENT OP_AFFECT Expression ForDirection Expression KW_DO . Instr
+
+    KW_BEGIN    décalage et aller à l'état 108
+    KW_IF       décalage et aller à l'état 152
+    KW_WHILE    décalage et aller à l'état 153
+    KW_REPEAT   décalage et aller à l'état 154
+    KW_FOR      décalage et aller à l'état 155
+    KW_WRITE    décalage et aller à l'état 156
+    KW_WRITELN  décalage et aller à l'état 157
+    KW_READ     décalage et aller à l'état 158
+    TOK_IDENT   décalage et aller à l'état 159
+
+    BlockCode  aller à l'état 160
+    Instr      aller à l'état 248
+    VarExpr    aller à l'état 163
+
+
+État 248
+
+   79 Instr: KW_FOR TOK_IDENT OP_AFFECT Expression ForDirection Expression KW_DO Instr .
+
+    $défaut  réduction par utilisation de la règle 79 (Instr)
